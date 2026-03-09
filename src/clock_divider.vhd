@@ -11,7 +11,7 @@
 --| ---------------------------------------------------------------------------
 --|
 --| FILENAME      : clock_divider.vhd
---| AUTHOR(S)     : Capt Phillip Warner
+--| AUTHOR(S)     : C3C Rushil Punukollu
 --| CREATED       : 03/2017
 --| DESCRIPTION   : This file implements a generic clock divider that uses a counter and comparator.
 --|					This provides more flexibility than simpler designs that use a bit from a 
@@ -49,12 +49,10 @@ use IEEE.STD_LOGIC_1164.ALL;
 use ieee.numeric_std.all;
 
 entity clock_divider is
-	generic ( constant k_DIV : natural := 2	); -- How many clk cycles until slow clock toggles
-											   -- Effectively, you divide the clk double this 
-											   -- number (e.g., k_DIV := 2 --> clock divider of 4)
+	generic ( constant k_DIV : natural := 2	); 
 	port ( 	i_clk    : in std_logic;
-			i_reset  : in std_logic;		   -- asynchronous
-			o_clk    : out std_logic		   -- divided (slow) clock
+			i_reset  : in std_logic;		   
+			o_clk    : out std_logic		  
 	);
 end clock_divider;
 
@@ -63,16 +61,9 @@ architecture countCompare of clock_divider is
 	signal f_clk	:	std_logic	:= '0';
 	
 begin
-	-- CONCURRENT STATEMENTS ----------------------------
 	
 	o_clk <= f_clk;
-	
-	
-	-- PROCESSES ----------------------------------------
-	
-	-- Clock count and divide Process -------------------
-	--   increment and compare f_count to k_DIV
-	--   rollover and toggle f_clk when count reaches k_DIV
+
 	countClock_proc : process(i_clk, i_reset)
 	begin
 		if i_reset = '1' then

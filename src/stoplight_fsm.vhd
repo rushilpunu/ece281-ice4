@@ -11,7 +11,7 @@
 --| ---------------------------------------------------------------------------
 --|
 --| FILENAME      : stoplight_fsm.vhd
---| AUTHOR(S)     : Capt Phillip Warner, Capt Dan Johnson
+--| AUTHOR(S)     : C3C Rushil Punukollu
 --| CREATED       : 02/22/2018, Last Modified 06/24/2020 by Capt Dan Johnson
 --| DESCRIPTION   : This module file implements solution for the HW stoplight example using 
 --|				  : direct hardware mapping (registers and CL) for BINARY encoding.
@@ -69,27 +69,27 @@ entity stoplight_fsm is
            o_G     : out  STD_LOGIC);
 end stoplight_fsm;
 
-architecture stoplight_fsm_arch of stoplight_fsm is 
-	
-	-- create register signals with default state yellow (10)
-  
+architecture Behavioral of stoplight_fsm is
+
+    signal f_Q      : std_logic_vector(1 downto 0) := "10";
+    signal f_Q_next : std_logic_vector(1 downto 0) := "10";
+
 begin
-	-- CONCURRENT STATEMENTS ----------------------------
-	-- Next state logic
-	
-	
-	-- Output logic
-	
-	-------------------------------------------------------	
-	
-	-- PROCESSES ----------------------------------------	
-	-- state memory w/ asynchronous reset ---------------
-	register_proc : process (  )
-	begin
-			--Reset state is yellow
 
+    register_proc : process (i_clk, i_reset)
+    begin
+        if i_reset = '1' then
+            f_Q <= "10";
+        elsif (rising_edge(i_clk)) then
+            f_Q <= f_Q_next;
+        end if;
+    end process register_proc;
 
-	end process register_proc;
-	-------------------------------------------------------
-	
-end stoplight_fsm_arch;
+    f_Q_next(0) <= (not f_Q(1)) and i_C;
+    f_Q_next(1) <= (not f_Q(1)) and f_Q(0) and (not i_C);
+
+    o_G <= (not f_Q(1)) and f_Q(0);
+    o_Y <= f_Q(1) and (not f_Q(0));
+    o_R <= ((not f_Q(1)) and (not f_Q(0))) or (f_Q(1) and f_Q(0));
+
+end Behavioral;

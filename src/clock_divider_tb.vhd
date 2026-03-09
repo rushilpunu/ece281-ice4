@@ -52,16 +52,13 @@ end clock_divider_tb;
 architecture test_bench of clock_divider_tb is 	
   
     component clock_divider is
-        generic ( constant k_DIV : natural := 2	); -- How many clk cycles until slow clock toggles
-                                                   -- Effectively, you divide the clk double this 
-                                                   -- number (e.g., k_DIV := 2 --> clock divider of 4)
+        generic ( constant k_DIV : natural := 2	); 
         port ( 	i_clk    : in std_logic;
-                i_reset  : in std_logic;		   -- asynchronous
-                o_clk    : out std_logic		   -- divided (slow) clock
+                i_reset  : in std_logic;		   
+                o_clk    : out std_logic		   
         );
     end component clock_divider;
 
-	-- Setup test clk (20 ns --> 50 MHz)
 	constant k_clk_period	: time 		:= 20 ns;
 	signal clk			 	: std_logic	:= '0';
 
@@ -73,7 +70,6 @@ architecture test_bench of clock_divider_tb is
 begin
 	-- PORT MAPS ----------------------------------------
 
-	-- map ports for any component instances (port mapping is like wiring hardware)
 	uut_inst : clock_divider 
 	generic map ( k_DIV => k_clock_divs )
 	port map (
@@ -83,7 +79,6 @@ begin
 	);
 
 	
-	-- PROCESSES ----------------------------------------
 	
 	-- Clock Process ------------------------------------
 	clk_process : process
@@ -96,17 +91,13 @@ begin
 	end process clk_process;
 	-----------------------------------------------------	
 	
-	-- Test Plan Process --------------------------------
 	test_process : process 
 	begin
-		-- clock should have good initial state, so let it divide at least twice
 		wait for k_clk_period * k_clock_divs * 2;
 		
-		-- now hold it in reset to verify that works correctly
 		reset <= '1';
 		wait for k_clk_period * k_clock_divs * 2;
 		
-		-- let the clock divide for rest of sim
 		reset <= '0';		
 		wait;
 	end process;	
